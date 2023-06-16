@@ -1,0 +1,47 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pictrs
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    spec:
+      containers:
+      - name: pictrs
+        image: docker.io/asonix/pictrs:0.4.0-rc.3
+        env:
+        - name: PICTRS__SERVER__API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: lemmy
+              key: PICTRS__API_KEY
+        - name: PICTRS__MEDIA__VIDEO_CODEC
+          value: vp9
+        - name: PICTRS__MEDIA__GIF__MAX_WIDTH
+          value: "256"
+        - name: PICTRS__MEDIA__GIF__MAX_HEIGHT
+          value: "256"
+        - name: PICTRS__MEDIA__GIF__MAX_AREA
+          value: "65536"
+        - name: PICTRS__MEDIA__GIF__MAX_FRAME_COUNT
+          value: "400"
+        - name: PICTRS__TRACING__LOGGING__TARGETS
+          value: debug
+        ports:
+          - containerPort: 8080
+            name: http
+            protocol: TCP
+        volumeMounts:
+        - name: pictrs
+          mountPath: /mnt
+      volumes:
+      - name: pictrs
+        persistentVolumeClaim:
+          claimName: pictrs-media
+      securityContext:
+        runAsUser: 991
+        runAsGroup: 991
+        fsGroup: 991

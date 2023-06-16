@@ -1,0 +1,31 @@
+# yaml-language-server: $schema=https://kubernetesjsonschema.dev/v1.14.0/deployment-apps-v1.json
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lemmy
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+      - name: lemmy
+        image: docker.io/dessalines/lemmy:0.17.4
+        ports:
+          - containerPort: 8536
+            name: http
+            protocol: TCP
+        env:
+        - name: RUST_LOG
+          value: "warn,lemmy_server=info,lemmy_api=info,lemmy_api_common=info,lemmy_api_crud=info,lemmy_apub=info,lemmy_db_schema=info,lemmy_db_views=info,lemmy_db_views_actor=info,lemmy_db_views_moderator=info,lemmy_routes=info,lemmy_utils=info,lemmy_websocket=info"
+        volumeMounts:
+        - name: lemmy-config
+          mountPath: /config
+      volumes:
+      - name: lemmy-config
+        secret:
+          secretName: lemmy
+      securityContext:
+        runAsUser: 991
+        runAsGroup: 991
+        fsGroup: 991

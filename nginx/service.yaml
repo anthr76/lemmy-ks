@@ -1,0 +1,18 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: lemmy-nginx
+spec:
+  internalTrafficPolicy: Cluster
+  ipFamilyPolicy: SingleStack
+  ports:
+  - name: http
+    port: 8080
+    protocol: TCP
+    targetPort: http
+  selector:
+    app.kubernetes.io/component: lemmy-nginx
+    app.kubernetes.io/name: lemmy-nginx
+  type: ClusterIP
+

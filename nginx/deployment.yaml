@@ -1,0 +1,62 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    configmap.reloader.stakater.com/reload: "lemmy-nginx-conf"
+  name: lemmy-nginx
+spec:
+  replicas: 2
+  selector:
+  strategy:
+    type: RollingUpdate
+  template:
+    spec:
+      containers:
+        - name: nginx
+          image: "ghcr.io/nginxinc/nginx-unprivileged:1.25"
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 30
+            periodSeconds: 5
+            successThreshold: 1
+            tcpSocket:
+              port: 8080
+            timeoutSeconds: 1
+          ports:
+            - containerPort: 8080
+              name: http
+              protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: 8080
+            timeoutSeconds: 1
+          lifecycle:
+            preStop:
+              exec:
+                command: ["/bin/sh","-c","nginx -s quit; while killall -0 nginx; do sleep 1; done"]
+          resources:
+            limits:
+              memory: 512Mi
+              cpu: 500m
+            requests:
+              cpu: 20m
+              memory: 128Mi
+          startupProbe:
+            failureThreshold: 30
+            periodSeconds: 5
+            successThreshold: 1
+            tcpSocket:
+              port: 8080
+            timeoutSeconds: 1
+          volumeMounts:
+            - mountPath: /etc/nginx/conf.d
+              readOnly: true
+              name: nginx-conf
+      volumes:
+        - name: nginx-conf
+          configMap:
+            name: lemmy-nginx-conf

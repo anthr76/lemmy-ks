@@ -1,0 +1,25 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lemmy-ui
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+      - name: lemmy-ui
+        image: docker.io/dessalines/lemmy-ui:0.17.4
+        env:
+          - name: LEMMY_UI_LEMMY_EXTERNAL_HOST
+            value: "0.0.0.0:8536"
+          - name: LEMMY_UI_LEMMY_INTERNAL_HOST
+            value: "lemmy:8536"
+        ports:
+          - containerPort: 1234
+            name: http
+            protocol: TCP
+      securityContext:
+        runAsUser: 991
+        runAsGroup: 991
+        fsGroup: 991

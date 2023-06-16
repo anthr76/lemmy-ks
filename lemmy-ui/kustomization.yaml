@@ -1,0 +1,20 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - deployment.yaml
+  - service.yaml
+commonLabels:
+  app.kubernetes.io/name: lemmy-ui
+  app.kubernetes.io/component: lemmy-ui
+# https://github.com/kubernetes-sigs/kustomize/issues/5172
+# replacements:
+# - source:
+#     kind: Ingress
+#     fieldPath: spec.rules.0.host
+#   targets:
+#   - select:
+#       kind: Deployment
+#       name: lemmy-ui
+#     fieldPaths:
+#       - spec.template.spec.containers.*.env.[name=LEMMY_UI_LEMMY_EXTERNAL_HOST].value

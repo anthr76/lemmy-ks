@@ -1,0 +1,21 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: lemmy
+spec:
+  rules:
+  - host: 10.0.0.1.xip.io
+    http:
+      paths:
+      - backend:
+          service:
+            name: lemmy-nginx
+            port:
+              number: 8080
+        path: /
+        pathType: ImplementationSpecific
+  tls:
+  - hosts:
+    - ""
+

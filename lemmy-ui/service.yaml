@@ -1,0 +1,18 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: lemmy-ui
+spec:
+  internalTrafficPolicy: Cluster
+  ipFamilyPolicy: SingleStack
+  ports:
+  - name: http
+    port: 1234
+    protocol: TCP
+    targetPort: http
+  selector:
+    app.kubernetes.io/component: lemmy-ui
+    app.kubernetes.io/name: lemmy-ui
+  type: ClusterIP
+
