@@ -39,4 +39,4 @@ jobs:
           --revision="$(git branch --show-current)@sha1:$(git rev-parse HEAD)" | \
           jq -r '. | .repository + "@" + .digest')
 
-          cosign sign $digest_url
+          # cosign sign $digest_url
