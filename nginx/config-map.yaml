@@ -3,66 +3,48 @@ kind: ConfigMap
 metadata:
   name: lemmy-nginx-conf
 data:
-  01-lemmy.conf: |
+  01-lemmy.template: |
     server {
-        # this is the port inside docker, not the public one yet
         listen 8080;
-        # change if needed, this is facing the public web
         server_name localhost;
         server_tokens off;
-        resolver kube-dns.kube-system.svc.cluster.local;
-
+        resolver ${DNS_RESOLVER_SERVICE}.${DNS_RESOLVER_NAMESPACE}.svc.${DNS_RESOLVER_DOMAIN};
         gzip on;
         gzip_types text/css application/javascript image/svg+xml;
         gzip_vary on;
-
-        # Upload limit, relevant for pictrs
         client_max_body_size 20M;
-
         add_header X-Frame-Options SAMEORIGIN;
         add_header X-Content-Type-Options nosniff;
         add_header X-XSS-Protection "1; mode=block";
-
-        # frontend general requests
         location / {
-            # distinguish between ui requests and backend
-            # don't change lemmy-ui or lemmy here, they refer to the upstream definitions on top
             set $proxpass "http://lemmy-ui.federation.svc.cluster.local:1234";
-
             if ($http_accept = "application/activity+json") {
-              set $proxpass "http://lemmy.federation.svc.cluster.local:8536";
+              set $proxpass "http://lemmy.${NAMESPACE}.svc.${DNS_RESOLVER_DOMAIN}:8536";
             }
             if ($http_accept = "application/ld+json; profile=\"https://www.w3.org/ns/activitystreams\"") {
-              set $proxpass "http://lemmy.federation.svc.cluster.local:8536";
+              set $proxpass "http://lemmy.${NAMESPACE}.svc.${DNS_RESOLVER_DOMAIN}:8536";
             }
             if ($request_method = POST) {
-              set $proxpass "http://lemmy.federation.svc.cluster.local:8536";
+              set $proxpass "http://lemmy.${NAMESPACE}.svc.${DNS_RESOLVER_DOMAIN}:8536";
             }
             proxy_pass $proxpass;
-
             rewrite ^(.+)/+$ $1 permanent;
-            # Send actual client IP upstream
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header Host $host;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         }
-
-        # backend
         location ~ ^/(api|pictrs|feeds|nodeinfo|.well-known) {
-            resolver kube-dns.kube-system.svc.cluster.local;
-            proxy_pass "http://lemmy.federation.svc.cluster.local:8536";
-            # proxy common stuff
+            resolver ${DNS_RESOLVER_SERVICE}.${DNS_RESOLVER_NAMESPACE}.svc.${DNS_RESOLVER_DOMAIN};
+            proxy_pass "http://lemmy.${NAMESPACE}.svc.${DNS_RESOLVER_DOMAIN}:8536";
             proxy_http_version 1.1;
             proxy_set_header Upgrade $http_upgrade;
             proxy_set_header Connection "upgrade";
-
-            # Send actual client IP upstream
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header Host $host;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         }
       }
-  02-metrics.conf: |
+  02-metrics.template: |
     server {
         listen       8090;
         server_name  metrics;
