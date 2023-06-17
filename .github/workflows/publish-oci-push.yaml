@@ -1,0 +1,42 @@
+---
+name: "Publish OCI Manifests on push"
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["main"]
+
+permissions:
+  packages: write
+  id-token: write
+
+env:
+  OCI_REPO: "oci://ghcr.io/anthr76/${{ github.event.repository.name }}"
+
+jobs:
+  publish-oci:
+    name: Publish Infrastructure
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Flux CLI
+        uses: fluxcd/flux2/action@main
+      - name: Setup Cosign
+        uses: sigstore/cosign-installer@main
+      - name: Login to GHCR
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Push and sign manifests
+        run: |
+          digest_url=$(flux push artifact \
+          $OCI_REPO:$(git rev-parse --short HEAD) \
+          --path="./" \
+          --source="$(git config --get remote.origin.url)" \
+          --revision="$(git branch --show-current)@sha1:$(git rev-parse HEAD)" |\
+          jq -r '. | .repository + "@" + .digest')
+
+          cosign sign $digest_url
