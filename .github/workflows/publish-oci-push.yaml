@@ -30,13 +30,12 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Push and sign manifests
+      - name: Push manifests
         run: |
           digest_url=$(flux push artifact \
           $OCI_REPO:$(git rev-parse --short HEAD) \
           --path="./" \
           --source="$(git config --get remote.origin.url)" \
-          --revision="$(git branch --show-current)@sha1:$(git rev-parse HEAD)" | \
-          jq -r '. | .repository + "@" + .digest')
+          --revision="$(git branch --show-current)@sha1:$(git rev-parse HEAD)"
 
-          cosign sign $digest_url
+          echo $digest_url
