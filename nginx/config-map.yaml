@@ -3,7 +3,7 @@ kind: ConfigMap
 metadata:
   name: lemmy-nginx-conf
 data:
-  01-lemmy.template: |
+  01-lemmy.conf.template: |
     server {
         listen 8080;
         server_name localhost;
@@ -44,7 +44,7 @@ data:
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         }
       }
-  02-metrics.template: |
+  02-metrics.conf.template: |
     server {
         listen       8090;
         server_name  metrics;
