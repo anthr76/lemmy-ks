@@ -36,5 +36,6 @@ jobs:
           --path="./" \
           --source="$(git config --get remote.origin.url)" \
           --revision="$(git tag --points-at HEAD)/$(git rev-parse HEAD)"
+          jq -r '. | .repository + .digest')
 
           echo $digest_url
