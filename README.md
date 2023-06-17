@@ -23,12 +23,6 @@ A Kustomize deployment for [Lemmy](https://github.com/LemmyNet/lemmy).
 - Postgres server
 - a (optional) PVC for pictrs
 
-### TODO
-
-- [ ] CI for OCI
-- [ ] A version strategy that matches upstream
-- [ ] Fix nginx config requiring FQDN of services to make deployment namespace agnostic.
-- [ ] General best practices check rootless, memory/cpu limits etc
 
 ```
 ---

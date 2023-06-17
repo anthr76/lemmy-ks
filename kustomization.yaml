@@ -20,7 +20,6 @@ replacements:
       name: lemmy-ui
     fieldPaths:
       - spec.template.spec.containers.*.env.[name=LEMMY_UI_LEMMY_INTERNAL_HOST].value
-    # - spec.template.spec.containers.*.env.[name=LEMMY_UI_LEMMY_WS_HOST].value
     options:
       delimiter: ':'
       index: 0
