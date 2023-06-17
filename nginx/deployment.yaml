@@ -25,8 +25,8 @@ spec:
               value: cluster.local
             - name: NAMESPACE
               valueFrom:
-              fieldRef:
-                fieldPath: metadata.namespace
+                fieldRef:
+                  fieldPath: metadata.namespace
           livenessProbe:
             failureThreshold: 30
             periodSeconds: 5
