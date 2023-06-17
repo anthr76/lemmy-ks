@@ -38,6 +38,6 @@ jobs:
           --revision="$(git tag --points-at HEAD)/$(git rev-parse HEAD)"
           jq -r '. | .repository + .digest')
 
-          flux tag artifact $OCI_REPO:$(git rev-parse --short HEAD) --tag main
+          flux tag artifact $OCI_REPO:$(git rev-parse --short HEAD) --tag "$(git tag --points-at HEAD)"
 
           echo $digest_url

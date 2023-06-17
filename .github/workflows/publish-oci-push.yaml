@@ -37,4 +37,6 @@ jobs:
           --revision="$(git branch --show-current)@sha1:$(git rev-parse HEAD)" | \
           jq -r '. | .repository + "@" + .digest')
 
+          flux tag artifact $OCI_REPO:$(git rev-parse --short HEAD) --tag main
+
           echo $digest_url
