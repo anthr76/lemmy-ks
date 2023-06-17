@@ -28,7 +28,7 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Push and sign manifests
+      - name: Push manifests
         run: |
           digest_url=$(flux push artifact \
           $OCI_REPO:$(git rev-parse --short HEAD) \
