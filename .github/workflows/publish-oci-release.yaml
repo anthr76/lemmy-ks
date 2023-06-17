@@ -16,15 +16,15 @@ env:
 
 jobs:
   publish-oci:
-    name: Publish Infrastructure
+    name: Publish OCI on release
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Setup Flux CLI
-        uses: fluxcd/flux2/action@main
+        uses: fluxcd/flux2/action@v2.0.0-rc.5
       - name: Setup Cosign
-        uses: sigstore/cosign-installer@main
+        uses: sigstore/cosign-installer@v3.0.5
       - name: Login to GHCR
         uses: docker/login-action@v2
         with:
