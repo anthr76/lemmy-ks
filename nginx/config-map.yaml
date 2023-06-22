@@ -7,7 +7,7 @@ data:
   01-lemmy.conf.template: |
     server {
         listen 8080;
-        access_log /dev/stdout json;
+        access_log /dev/stdout logger-json;
         error_log /dev/stderr error;
         server_name localhost;
         server_tokens off;
