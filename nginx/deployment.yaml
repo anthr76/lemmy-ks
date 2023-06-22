@@ -67,6 +67,11 @@ spec:
             - mountPath: /etc/nginx/templates
               readOnly: true
               name: nginx-conf
+              subPath: 01-lemmy.conf.template
+            - mountPath: /etc/nginx
+              readOnly: true
+              name: nginx-conf
+              subPath: nginx.conf
       volumes:
         - name: nginx-conf
           configMap:

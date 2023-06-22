@@ -47,3 +47,36 @@ data:
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         }
       }
+  nginx.conf: |
+      worker_processes  auto;
+      pid        /tmp/nginx.pid;
+      events {
+          worker_connections  1024;
+      }
+      http {
+          proxy_temp_path /tmp/proxy_temp;
+          client_body_temp_path /tmp/client_temp;
+          fastcgi_temp_path /tmp/fastcgi_temp;
+          uwsgi_temp_path /tmp/uwsgi_temp;
+          scgi_temp_path /tmp/scgi_temp;
+          include       /etc/nginx/mime.types;
+          default_type  application/octet-stream;
+          log_format json_logs escape=json
+            '{'
+              '"time_local":"$time_local",'
+              '"remote_addr":"$remote_addr",'
+              '"remote_user":"$remote_user",'
+              '"request":"$request",'
+              '"status": "$status",'
+              '"body_bytes_sent":"$body_bytes_sent",'
+              '"request_time":"$request_time",'
+              '"http_referrer":"$http_referer",'
+              '"http_user_agent":"$http_user_agent"'
+            '}';
+          access_log /dev/stdout json_logs buffer=32k;
+          error_log  /dev/stderr notice;
+          sendfile        on;
+          keepalive_timeout  65;
+          include /etc/nginx/conf.d/*.conf;
+      }
+
