@@ -7,9 +7,8 @@ data:
   01-lemmy.conf.template: |
     server {
         listen 8080;
-        access_log /dev/stdout logger-json;
-        error_log /dev/stderr error;
         server_name localhost;
+        access_log /dev/stdout json_logs buffer=32k;
         server_tokens off;
         resolver ${DNS_RESOLVER_SERVICE}.${DNS_RESOLVER_NAMESPACE}.svc.${DNS_RESOLVER_DOMAIN};
         gzip on;

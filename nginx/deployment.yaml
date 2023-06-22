@@ -64,11 +64,11 @@ spec:
               port: 8080
             timeoutSeconds: 1
           volumeMounts:
-            - mountPath: /etc/nginx/templates
+            - mountPath: /etc/nginx/templates/01-lemmy.conf.template
               readOnly: true
               name: nginx-conf
               subPath: 01-lemmy.conf.template
-            - mountPath: /etc/nginx
+            - mountPath: /etc/nginx/nginx.conf
               readOnly: true
               name: nginx-conf
               subPath: nginx.conf
