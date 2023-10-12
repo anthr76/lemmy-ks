@@ -12,9 +12,9 @@ commonLabels:
   app.kubernetes.io/managed-by: Kustomize
 images:
 - name: docker.io/dessalines/lemmy:0.17.4
-  newTag: "0.18.3"
+  newTag: "0.18.5"
 - name: docker.io/dessalines/lemmy-ui:0.17.4
-  newTag: "0.18.3"
+  newTag: "0.18.5"
 replacements:
 - source:
     kind: Service
